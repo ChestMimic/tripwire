@@ -13,10 +13,7 @@ bool isProcessIDActive(DWORD processID){
 	DWORD aProcesses[1024], cbNeeded, cProcesses;
 	unsigned int i;
 
-	if(!EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded)){
-		return FALSE;
-	}
-	else{
+	if(EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded)){
 		cProcesses = cbNeeded/sizeof(DWORD);
 		for(i = 0; i < cProcesses; i++){
 			if(aProcesses[i] != 0){
@@ -35,18 +32,18 @@ int main(int argc, char* argv[]){
 	if (argc > 1){
 		pidU = atoi(argv[1]);
 	}
-    bool trigger = isProcessIDActive(pidU);
-    if(trigger){
-    	printf("Arming tripwire to Process ID: %d\n.", pidU);
-    	while(trigger){
-    		trigger = isProcessIDActive(pidU);
-    		Sleep(POLL_FREQ);
-    	}
-    	printf("PID no longer available, triggering followup.");
-    	system("shutdown -s -t 60");
-    }
-    else{
-    	printf("No matching PID to attach tripwire: %d\n", pidU);
-    }
+	bool trigger = isProcessIDActive(pidU);
+	if(trigger){
+		printf("Arming tripwire to Process ID: %d\n.", pidU);
+		while(trigger){
+			trigger = isProcessIDActive(pidU);
+			Sleep(POLL_FREQ);
+		}
+		printf("PID no longer available, triggering followup.");
+		system("shutdown -s -t 60");
+	}
+	else{
+		printf("No matching PID to attach tripwire: %d\n", pidU);
+	}
 	return 0;
 }
