@@ -4,12 +4,8 @@
 
 //gcc -o tripwire.exe tripwire.cpp -lpsapi -lstdc++
 #include <windows.h>
-#include <tlhelp32.h>
-#include <iostream>
-#include <string>
-#include <stdio.h>
 #include <psapi.h>
-#include <tchar.h>
+#include <stdio.h>
 
 int POLL_FREQ = 1000;
 
