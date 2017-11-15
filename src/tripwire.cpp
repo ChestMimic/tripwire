@@ -2,7 +2,7 @@
 //Run a command when a given process ID terminates
 //Author: Mark Fitzgibbon
 
-//gcc -o tripwire.exe tripwire.cpp -lsapi -lstdc++
+//gcc -o tripwire.exe tripwire.cpp -lpsapi -lstdc++
 #include <windows.h>
 #include <tlhelp32.h>
 #include <iostream>
@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <psapi.h>
 #include <tchar.h>
+
+int POLL_FREQ = 1000;
 
 bool isProcessIDActive(DWORD processID){
 	DWORD aProcesses[1024], cbNeeded, cProcesses;
@@ -42,11 +44,10 @@ int main(int argc, char* argv[]){
     	printf("Arming tripwire to Process ID: %d\n.", pidU);
     	while(trigger){
     		trigger = isProcessIDActive(pidU);
-    		Sleep(1000);
-    		printf("PING\n");
+    		Sleep(POLL_FREQ);
     	}
     	printf("PID no longer available, triggering followup.");
-    	system("shutdown /r /t 60");
+    	system("shutdown -s -t 60");
     }
     else{
     	printf("No matching PID to attach tripwire: %d\n", pidU);

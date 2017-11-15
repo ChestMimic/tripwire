@@ -1,0 +1,1 @@
+gcc -o bin/tripwire.exe tripwire.cpp -lpsapi -lstdc++
