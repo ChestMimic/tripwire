@@ -4,6 +4,7 @@
 
 //gcc -o tripwire.exe tripwire.cpp -lpsapi -lstdc++
 #include <windows.h>
+#include <string>
 #include <psapi.h>
 #include <stdio.h>
 
@@ -29,21 +30,28 @@ bool isProcessIDActive(DWORD processID){
 
 int main(int argc, char* argv[]){
 	DWORD pidU = -1;
+	std::string command= "";
 	if (argc > 1){
-		pidU = atoi(argv[1]);
+		pidU = atoi(argv[1]);	
+		int index = 2;
+		while(index < argc){
+			command += argv[index];
+			command += " ";
+			index++;
+		}
 	}
 	bool trigger = isProcessIDActive(pidU);
 	if(trigger){
-		printf("Arming tripwire to Process ID: %d\n.", pidU);
+		printf("Arming tripwire to Process ID: %d\n", pidU);
 		while(trigger){
 			trigger = isProcessIDActive(pidU);
 			Sleep(POLL_FREQ);
 		}
-		printf("PID no longer available, triggering followup.");
-		system("shutdown -s -t 60");
+		printf("PID %d ended\n", pidU);
+		system(command.c_str());
 	}
 	else{
-		printf("No matching PID to attach tripwire: %d\n", pidU);
+		printf("PID %d not found in tasklist\n", pidU);
 	}
 	return 0;
 }
